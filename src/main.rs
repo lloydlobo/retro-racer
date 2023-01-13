@@ -39,6 +39,7 @@ fn main() {
 
     app.add_plugin(AssetsPlugin).add_plugin(WallsPlugin);
 
+    // For dev only. Use AppState::Game to skip StartMenu
     app.add_state(AppState::Game)
         .add_state(AppGameState::Invalid);
 

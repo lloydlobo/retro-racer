@@ -41,3 +41,9 @@ rr:
 # Update cargo dependencies
 u:
     cargo update
+# Watch for file changes and run binary in debug mode
+w:
+    cargo watch -x 'r -F bevy/dynamic'
+# Watch for file changes and run binary in release mode
+wr:
+    cargo watch -x 'r -r -F bevy/dynamic'

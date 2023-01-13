@@ -1,0 +1,76 @@
+use crate::prelude::*;
+
+#[derive(Debug, Resource)]
+pub struct SpriteAssets {
+    // pub player_car: Handle<Image>,
+    // pub laser: Handle<Image>,
+    // pub guardian_big: Handle<Image>,
+    // pub guardian_med: Handle<Image>,
+    // pub guardian_small: Handle<Image>,
+    // pub meteor_big: Handle<Image>,
+    // pub meteor_med: Handle<Image>,
+    // pub meteor_small: Handle<Image>,
+    // pub ship_explosion: Handle<Image>,
+    // pub ship_contact: Handle<Image>,
+    // pub asteroid_explosion: Handle<Image>,
+    // pub guardian_explosion: Handle<Image>,
+}
+
+#[derive(Debug, Resource)]
+pub struct AudioAssets {
+    pub car_explosion: Handle<AudioSource>,
+    pub car_motor: Handle<AudioSource>,
+    // pub laser_trigger: Handle<AudioSource>,
+    // pub ship_contact: Handle<AudioSource>,
+    // pub asteroid_explosion: Handle<AudioSource>,
+    // pub guardian_explosion: Handle<AudioSource>,
+}
+
+#[derive(Debug, Resource)]
+pub struct UiAssets {
+    pub font: Handle<Font>,
+    // pub car_life: UiImage,
+}
+
+//----------------------------------------------------------------
+
+pub struct AssetsPlugin;
+
+impl Plugin for AssetsPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_startup_system(setup);
+    }
+}
+
+//----------------------------------------------------------------
+
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    // commands.insert_resource(SpriteAssets {
+    //     // player_car: asset_server.load("playerShip2_red.png"),
+    //     // laser: asset_server.load("laserRed07.png"),
+    //     // guardian_big: asset_server.load("sprite_sphere_256x256.png"),
+    //     // guardian_med: asset_server.load("sprite_sphere_158x158.png"),
+    //     // guardian_small: asset_server.load("sprite_sphere_97x97.png"),
+    //     // meteor_big: asset_server.load("meteorBrown_big1.png"),
+    //     // meteor_med: asset_server.load("meteorBrown_med1.png"),
+    //     // meteor_small: asset_server.load("meteorBrown_small1.png"),
+    //     // ship_explosion: asset_server.load("explosion01.png"),
+    //     // ship_contact: asset_server.load("explosion01.png"),
+    //     // asteroid_explosion: asset_server.load("flash00.png"),
+    //     // guardian_explosion: asset_server.load("laserRed-7.png"),
+    // });
+
+    commands.insert_resource(AudioAssets {
+        car_explosion: asset_server.load("sounds/explosion.ogg"),
+        car_motor: asset_server.load("sounds/motor.ogg"),
+        // laser_trigger: asset_server.load("sfx_laser1.ogg"),
+        // ship_contact: asset_server.load("Explosion.ogg"),
+        // asteroid_explosion: asset_server.load("Explosion.ogg"),
+        // guardian_explosion: asset_server.load("Explosion_ship.ogg"),
+    });
+
+    commands.insert_resource(UiAssets {
+        font: asset_server.load("fonts/Calculator.ttf"),
+        // car_life: asset_server.load("playerLife1_red.png").into(),
+    });
+}

@@ -3,7 +3,9 @@ use bevy::prelude::Color;
 pub const BG_COLOR: &str = "8d9e7b";
 pub const FONT_SIZE: f32 = 32.;
 
+pub const PLAYER_Y: f32 = SCREEN_Y + (HALF_TILE * 4.0);
 pub const TILE_COLOR: Color = Color::rgba(0., 0., 0., 0.4);
+
 pub const TILE_SIZE: f32 = 20.;
 pub const HALF_TILE: f32 = 20.;
 

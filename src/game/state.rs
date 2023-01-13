@@ -1,5 +1,6 @@
-use crate::prelude::*;
 use bevy::ecs::schedule::StateData;
+
+use crate::prelude::*;
 
 #[derive(Debug, Copy, Clone, Hash, Eq, PartialEq)]
 pub enum AppState {

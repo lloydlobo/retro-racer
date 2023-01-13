@@ -1,4 +1,16 @@
 // Copied and slightly modified from [wichops/bevy_retro_racing](https://github.com/wichops/bevy_retro_racing/blob/main/src/main.rs)
+#![deny(clippy::pedantic)]
+#![warn(clippy::nursery)]
+#![warn(dead_code)]
+#![warn(unused_variables)]
+#![warn(unused_must_use)]
+#![deny(clippy::useless_format)]
+#![allow(clippy::too_many_arguments)]
+#![allow(clippy::module_name_repetitions)]
+#![allow(clippy::needless_pass_by_value)]
+#![allow(anonymous_parameters)]
+#![allow(elided_lifetimes_in_paths)]
+#![allow(clippy::cast_precision_loss)]
 
 mod assets;
 mod components;
@@ -8,9 +20,22 @@ mod resources;
 mod screen;
 
 mod prelude {
-    pub use bevy::prelude::*;
+    pub use std::ops::Neg;
 
-    pub use crate::{assets::*, components::*, config::*, game::*, resources::*, screen::*};
+    pub use bevy::prelude::*;
+    pub use rand::{
+        thread_rng,
+        Rng,
+    };
+
+    pub use crate::{
+        assets::*,
+        components::*,
+        config::*,
+        game::*,
+        resources::*,
+        screen::*,
+    };
 }
 
 use bevy::window::PresentMode;
@@ -20,8 +45,7 @@ fn main() {
     println!("{WINDOW_WIDTH}, {WINDOW_HEIGHT}");
     let mut app = App::new();
 
-    app.init_resource::<Scoreboard>()
-        .init_resource::<GameData>();
+    app.init_resource::<Scoreboard>().init_resource::<GameData>();
 
     app.insert_resource(ClearColor(Color::hex(BG_COLOR).unwrap()));
 
@@ -37,14 +61,15 @@ fn main() {
         ..default()
     }));
 
-    app.add_plugin(AssetsPlugin).add_plugin(WallsPlugin);
+    app.add_plugin(AssetsPlugin)
+        .add_plugin(WallsPlugin)
+        .add_plugin(BotPlugin)
+        .add_plugin(PlayerPlugin);
 
     // For dev only. Use AppState::Game to skip StartMenu
-    app.add_state(AppState::Game)
-        .add_state(AppGameState::Invalid);
+    app.add_state(AppState::Game).add_state(AppGameState::Invalid);
 
-    app.add_startup_system(setup_camera)
-        .add_startup_system(setup);
+    app.add_startup_system(setup_camera).add_startup_system(setup);
 
     app.run();
 }
@@ -67,8 +92,9 @@ fn setup(
     commands.insert_resource(ExplosionSound(asset_server.load("sounds/explosion.ogg")));
     commands.insert_resource(MotorSound(asset_server.load("sounds/motor.ogg")));
 
-    // commands.insert_resource(ExplosionSound(handles_audio.car_explosion.clone()));
-    // commands.insert_resource(MotorSound(handles_audio.car_motor.clone()));
+    // commands.insert_resource(ExplosionSound(handles_audio.car_explosion.
+    // clone())); commands.insert_resource(MotorSound(handles_audio.car_motor.
+    // clone()));
 
     let text_style = TextStyle {
         // font: handles_ui.font.clone(),
@@ -89,11 +115,7 @@ fn setup(
                     display: Display::Flex,
                     position_type: PositionType::Absolute,
                     justify_content: JustifyContent::FlexEnd,
-                    position: UiRect {
-                        top: Val::Px(60f32),
-                        right: Val::Px(20f32),
-                        ..default()
-                    },
+                    position: UiRect { top: Val::Px(60f32), right: Val::Px(20f32), ..default() },
                     ..default()
                 })
                 .with_text_alignment(text_alignment),
@@ -112,11 +134,7 @@ fn setup(
                     display: Display::Flex,
                     position_type: PositionType::Absolute,
                     justify_content: JustifyContent::FlexEnd,
-                    position: UiRect {
-                        top: Val::Px(120f32),
-                        right: Val::Px(20f32),
-                        ..default()
-                    },
+                    position: UiRect { top: Val::Px(120f32), right: Val::Px(20f32), ..default() },
                     ..default()
                 })
                 .with_text_alignment(text_alignment),
@@ -127,14 +145,11 @@ fn setup(
     for x in 0..SCREEN_WIDTH {
         for y in 0..SCREEN_HEIGHT {
             commands.spawn(SpriteBundle {
-                sprite: Sprite {
-                    color: Color::rgba(0., 0., 0., 0.1),
-                    ..default()
-                },
+                sprite: Sprite { color: Color::rgba(0., 0., 0., 0.1), ..default() },
                 transform: Transform {
                     translation: Vec3::new(
-                        SCREEN_X + x as f32 * TILE_SIZE + HALF_TILE,
-                        SCREEN_Y + y as f32 * TILE_SIZE + HALF_TILE,
+                        (x as f32).mul_add(TILE_SIZE, SCREEN_X) + HALF_TILE,
+                        (y as f32).mul_add(TILE_SIZE, SCREEN_Y) + HALF_TILE,
                         0f32,
                     ),
                     scale: Vec3::new(0.8f32, 0.8f32, 1f32),

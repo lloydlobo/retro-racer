@@ -1,7 +1,9 @@
+mod helpers;
 mod state;
+mod walls;
 
 use bevy::ecs::schedule::StateData;
 
-pub use self::{ state::*};
+pub use self::{helpers::*, state::*, walls::*};
 
-use crate::prelude::*;
+pub use crate::prelude::*;

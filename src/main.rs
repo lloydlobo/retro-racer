@@ -1,6 +1,7 @@
 // Copied and slightly modified from [wichops/bevy_retro_racing](https://github.com/wichops/bevy_retro_racing/blob/main/src/main.rs)
 
 mod assets;
+mod components;
 mod config;
 mod game;
 mod resources;
@@ -9,7 +10,7 @@ mod screen;
 mod prelude {
     pub use bevy::prelude::*;
 
-    pub use crate::{assets::*, config::*, game::*, resources::*, screen::*};
+    pub use crate::{assets::*, components::*, config::*, game::*, resources::*, screen::*};
 }
 
 use bevy::window::PresentMode;
@@ -36,9 +37,9 @@ fn main() {
         ..default()
     }));
 
-    app.add_plugin(AssetsPlugin);
+    app.add_plugin(AssetsPlugin).add_plugin(WallsPlugin);
 
-    app.add_state(AppState::StartMenu)
+    app.add_state(AppState::Game)
         .add_state(AppGameState::Invalid);
 
     app.add_startup_system(setup_camera)

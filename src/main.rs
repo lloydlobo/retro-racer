@@ -66,8 +66,9 @@ fn main() {
         .add_plugin(BotPlugin)
         .add_plugin(PlayerPlugin);
 
-    // For dev only. Use AppState::Game to skip StartMenu
-    app.add_state(AppState::Game).add_state(AppGameState::Invalid);
+    // For dev only. Use AppState::Game to skip StartMenu, AppGameState::Game.
+    // Or AppState::GameMenu & AppGameState::Invalid
+    app.add_state(AppState::Game).add_state(AppGameState::Game);
 
     app.add_startup_system(setup_camera).add_startup_system(setup);
 

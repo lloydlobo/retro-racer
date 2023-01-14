@@ -22,8 +22,10 @@ fn spawn_bot(mut commands: Commands, asset_server: Res<AssetServer>) {
             TILE_SIZE.mul_add(CAR_SPACING, (SCREEN_HEIGHT as f32).mul_add(TILE_SIZE, SCREEN_Y));
         let y_distance = y as f32 * TILE_SIZE * CAR_SPACING;
 
+        let mut invincible_timer = InvincibleTimer::new(INVINCIBLE_TIME, TimerMode::Once);
+        let invincible_timer: Timer = invincible_timer.tick();
         commands
-            .spawn((Car { column }, MoveY, Bot))
+            .spawn((Car { column, invincible_timer, invincible_time_secs: 0f32 }, MoveY, Bot))
             .with_children(draw_car)
             .insert(anchor_sprite(pos_x, pos_y + y_distance));
 

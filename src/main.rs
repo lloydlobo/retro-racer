@@ -19,25 +19,6 @@ mod game;
 mod resources;
 mod screen;
 
-mod prelude {
-    pub use std::ops::Neg;
-
-    pub use bevy::prelude::*;
-    pub use rand::{
-        thread_rng,
-        Rng,
-    };
-
-    pub use crate::{
-        assets::*,
-        components::*,
-        config::*,
-        game::*,
-        resources::*,
-        screen::*,
-    };
-}
-
 use bevy::window::PresentMode;
 use prelude::*;
 
@@ -160,4 +141,27 @@ fn setup(
             });
         }
     }
+}
+
+mod prelude {
+    pub use std::{
+        ops::Neg,
+        time::Duration,
+    };
+
+    pub use bevy::prelude::*;
+    pub use leafwing_input_manager::prelude::*;
+    pub use rand::{
+        thread_rng,
+        Rng,
+    };
+
+    pub use crate::{
+        assets::*,
+        components::*,
+        config::*,
+        game::*,
+        resources::*,
+        screen::*,
+    };
 }

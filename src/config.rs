@@ -26,3 +26,7 @@ pub const SCREEN_WIDTH: usize = 9 + PADDING * 2;
 pub const SCREEN_HEIGHT: usize = 20;
 pub const SCREEN_X: f32 = WINDOW_WIDTH / -2. + WINDOW_PADDING;
 pub const SCREEN_Y: f32 = WINDOW_HEIGHT / -2. + WINDOW_PADDING;
+
+pub const START_LIFE: u32 = 7u32;
+pub const INVINCIBLE_TIME: f32 = 2f32;
+pub const MAX_INVINCIBLE_TIME: f32 = 5f32;

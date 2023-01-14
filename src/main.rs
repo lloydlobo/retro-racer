@@ -19,6 +19,29 @@ mod game;
 mod resources;
 mod screen;
 
+mod prelude {
+    pub use std::{
+        ops::Neg,
+        time::Duration,
+    };
+
+    pub use bevy::prelude::*;
+    pub use leafwing_input_manager::prelude::*;
+    pub use rand::{
+        thread_rng,
+        Rng,
+    };
+
+    pub use crate::{
+        assets::*,
+        components::*,
+        config::*,
+        game::*,
+        resources::*,
+        screen::*,
+    };
+}
+
 use bevy::window::PresentMode;
 use prelude::*;
 
@@ -78,51 +101,7 @@ fn setup(
     // clone())); commands.insert_resource(MotorSound(handles_audio.car_motor.
     // clone()));
 
-    let text_style = TextStyle {
-        // font: handles_ui.font.clone(),
-        font: asset_server.load("fonts/Calculator.ttf"),
-        font_size: FONT_SIZE,
-        color: Color::BLACK,
-    };
-    let text_alignment = TextAlignment::CENTER_RIGHT;
-
-    score_resource.entities.score = Some(
-        commands
-            .spawn(
-                TextBundle::from_sections([
-                    TextSection::new("SCORE\n", text_style.clone()),
-                    TextSection::new(score_resource.score.to_string(), text_style.clone()),
-                ])
-                .with_style(Style {
-                    display: Display::Flex,
-                    position_type: PositionType::Absolute,
-                    justify_content: JustifyContent::FlexEnd,
-                    position: UiRect { top: Val::Px(60f32), right: Val::Px(20f32), ..default() },
-                    ..default()
-                })
-                .with_text_alignment(text_alignment),
-            )
-            .id(),
-    );
-
-    score_resource.entities.highscore = Some(
-        commands
-            .spawn(
-                TextBundle::from_sections([
-                    TextSection::new("HIGHSCORE\n", text_style.clone()),
-                    TextSection::new(score_resource.highscore.to_string(), text_style),
-                ])
-                .with_style(Style {
-                    display: Display::Flex,
-                    position_type: PositionType::Absolute,
-                    justify_content: JustifyContent::FlexEnd,
-                    position: UiRect { top: Val::Px(120f32), right: Val::Px(20f32), ..default() },
-                    ..default()
-                })
-                .with_text_alignment(text_alignment),
-            )
-            .id(),
-    );
+    setup_scoreboard(asset_server, score_resource, &mut commands);
 
     for x in 0..SCREEN_WIDTH {
         for y in 0..SCREEN_HEIGHT {
@@ -143,25 +122,52 @@ fn setup(
     }
 }
 
-mod prelude {
-    pub use std::{
-        ops::Neg,
-        time::Duration,
+fn setup_scoreboard(
+    asset_server: Res<AssetServer>,
+    mut score_resource: ResMut<Scoreboard>,
+    commands: &mut Commands,
+) {
+    let text_style = TextStyle {
+        // font: handles_ui.font.clone(),
+        font: asset_server.load("fonts/Calculator.ttf"),
+        font_size: FONT_SIZE,
+        color: Color::BLACK,
     };
-
-    pub use bevy::prelude::*;
-    pub use leafwing_input_manager::prelude::*;
-    pub use rand::{
-        thread_rng,
-        Rng,
-    };
-
-    pub use crate::{
-        assets::*,
-        components::*,
-        config::*,
-        game::*,
-        resources::*,
-        screen::*,
-    };
+    let text_alignment = TextAlignment::CENTER_RIGHT;
+    score_resource.entities.score = Some(
+        commands
+            .spawn(
+                TextBundle::from_sections([
+                    TextSection::new("SCORE\n", text_style.clone()),
+                    TextSection::new(score_resource.score.to_string(), text_style.clone()),
+                ])
+                .with_style(Style {
+                    display: Display::Flex,
+                    position_type: PositionType::Absolute,
+                    justify_content: JustifyContent::FlexEnd,
+                    position: UiRect { top: Val::Px(60f32), right: Val::Px(20f32), ..default() },
+                    ..default()
+                })
+                .with_text_alignment(text_alignment),
+            )
+            .id(),
+    );
+    score_resource.entities.highscore = Some(
+        commands
+            .spawn(
+                TextBundle::from_sections([
+                    TextSection::new("HIGHSCORE\n", text_style.clone()),
+                    TextSection::new(score_resource.highscore.to_string(), text_style),
+                ])
+                .with_style(Style {
+                    display: Display::Flex,
+                    position_type: PositionType::Absolute,
+                    justify_content: JustifyContent::FlexEnd,
+                    position: UiRect { top: Val::Px(120f32), right: Val::Px(20f32), ..default() },
+                    ..default()
+                })
+                .with_text_alignment(text_alignment),
+            )
+            .id(),
+    );
 }

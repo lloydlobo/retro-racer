@@ -14,8 +14,10 @@ impl Plugin for WallsPlugin {
 fn draw_walls(parent: &mut ChildBuilder) {
     let sprite =
         Sprite { custom_size: Some(Vec2::splat(TILE_SIZE)), color: TILE_COLOR, ..default() };
+
+    // 3 pixels for 1 wall block (rectangle).
     for y in 0..3 {
-        let pos_y = (y as f32).mul_add(TILE_SIZE, -HALF_TILE);
+        let pos_y = (y as f32).mul_add(TILE_SIZE, HALF_TILE.neg());
         parent.spawn(SpriteBundle {
             sprite: sprite.clone(),
             transform: Transform {
@@ -39,7 +41,7 @@ fn draw_walls(parent: &mut ChildBuilder) {
 
 fn spawn_walls(mut commands: Commands) {
     for y in 0..6 {
-        let pos_y = SCREEN_Y + TILE_SIZE;
+        let pos_y: f32 = SCREEN_Y + TILE_SIZE;
         let y_distance = y as f32 * TILE_SIZE * WALL_SPACING;
         commands
             .spawn((Wall, MoveY))

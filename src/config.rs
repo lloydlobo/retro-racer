@@ -6,15 +6,12 @@ pub const FONT_SIZE: f32 = 32.;
 pub const PLAYER_Y: f32 = SCREEN_Y + (HALF_TILE * 4.0);
 pub const TILE_COLOR: Color = Color::rgba(0., 0., 0., 0.4);
 
-pub const TILE_SIZE: f32 = 20.;
-pub const HALF_TILE: f32 = 20.;
-
-pub const COLUMN_SIZE: f32 = TILE_SIZE * 3.;
-
 pub const UI_WIDTH: f32 = 120.;
-
 pub const WALL_SPACING: f32 = 5.;
 pub const CAR_SPACING: f32 = 9.;
+pub const TILE_SIZE: f32 = 20.;
+pub const HALF_TILE: f32 = TILE_SIZE / 2.;
+pub const COLUMN_SIZE: f32 = TILE_SIZE * 3.;
 
 pub const PADDING: usize = 2;
 

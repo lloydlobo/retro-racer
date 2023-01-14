@@ -32,9 +32,30 @@ fn player_invincible_color(mut cars: Query<(&Car, &mut Sprite)>) {
         }
     }
 }
+
+#[derive(Debug)]
+pub enum Lane {
+    /// 0usize
+    Left,
+    /// 1usize
+    Middle,
+    /// 2usize
+    Right,
+}
+
+impl Lane {
+    pub const fn column(self) -> usize {
+        match self {
+            Self::Left => 0,
+            Self::Middle => 1,
+            Self::Right => 2,
+        }
+    }
+}
+
 // app.add_plugin(InputManagerPlugin::<PlayerAction>::default());
 fn spawn_player(mut commands: Commands) {
-    let column = 1usize;
+    let column = Lane::column(Lane::Middle);
     let pos_x: f32 = TileScreen::column_to_coord(column);
     let mut invincible_timer = InvincibleTimer::new(INVINCIBLE_TIME, TimerMode::Once);
     let invincible_timer: Timer = invincible_timer.tick();
@@ -54,6 +75,16 @@ fn spawn_player(mut commands: Commands) {
 }
 
 /// Moves the player.
+// if action_state.just_pressed(PlayerAction::Left) && car.column >
+// Lane::index(Lane::Left) {
+// direction -= COLUMN_SIZE;
+//     car.column -= Lane::index(Lane::Middle);
+// }
+// if action_state.just_pressed(PlayerAction::Right) && car.column <
+// Lane::index(Lane::Right) {     direction += COLUMN_SIZE;
+//     car.column += Lane::index(Lane::Middle);
+// }
+// player_transform.translation.x += direction;
 fn player_input_system(
     gamestate: Res<State<AppGameState>>,
     mut query: Query<(&ActionState<PlayerAction>, &mut Transform, &mut Car), With<Player>>,
@@ -63,17 +94,27 @@ fn player_input_system(
     }
 
     for (action_state, mut player_transform, mut car) in query.iter_mut() {
+        // y axis positive.. upwards.
         let mut direction = 0f32;
 
-        if action_state.just_pressed(PlayerAction::Left) && car.column > 0usize {
-            direction -= COLUMN_SIZE;
-            car.column -= 1usize;
+        let actions = [PlayerAction::Left, PlayerAction::Right];
+        for a in actions {
+            match (a, action_state.just_pressed(a)) {
+                (PlayerAction::Left, true) => {
+                    if car.column > Lane::column(Lane::Left) {
+                        direction -= COLUMN_SIZE;
+                        car.column -= Lane::column(Lane::Middle);
+                    }
+                }
+                (PlayerAction::Right, true) => {
+                    if car.column < Lane::column(Lane::Right) {
+                        direction += COLUMN_SIZE;
+                        car.column += Lane::column(Lane::Middle);
+                    }
+                }
+                (..) => {}
+            }
         }
-        if action_state.just_pressed(PlayerAction::Right) && car.column < 2usize {
-            direction += COLUMN_SIZE;
-            car.column += 1usize;
-        }
-
         player_transform.translation.x += direction;
     }
 }

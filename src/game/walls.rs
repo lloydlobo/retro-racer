@@ -4,8 +4,9 @@ pub struct WallsPlugin;
 
 impl Plugin for WallsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(AppState::Game).with_system(spawn_walls));
-        // .add_system_set(SystemSet::on_update(AppState::Game).
+        app.add_system_set(SystemSet::on_enter(AppState::Game).with_system(spawn_walls))
+            .add_system_set(SystemSet::on_update(AppState::Game).with_system(respawn_wall));
+
         // with_system(movement));
     }
 }
@@ -53,4 +54,15 @@ fn spawn_walls(mut commands: Commands) {
 
     // Rapier configuration without gravity.
     // rapier_cfg.gravity = Vec2::ZERO;
+}
+
+/// Respawn the walls each time the previous goes out of scope along y axis.
+/// Gives the infinite road or walls illusion.
+fn respawn_wall(mut query: Query<&mut Transform, With<Wall>>) {
+    for mut wall_transform in query.iter_mut() {
+        if wall_transform.translation.y < TILE_SIZE.mul_add(WALL_SPACING.neg() + 1f32, PLAYER_Y) {
+            wall_transform.translation.y = TILE_SIZE
+                .mul_add(WALL_SPACING, (SCREEN_HEIGHT as f32).mul_add(TILE_SIZE, SCREEN_Y));
+        }
+    }
 }

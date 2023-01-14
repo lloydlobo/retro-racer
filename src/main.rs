@@ -44,7 +44,7 @@ fn main() {
 
     app.add_plugin(AssetsPlugin)
         .add_plugin(WallsPlugin)
-        .add_plugin(BotPlugin)
+        // .add_plugin(BotPlugin)
         .add_plugin(PlayerPlugin);
 
     // For dev only. Use AppState::Game to skip StartMenu, AppGameState::Game.

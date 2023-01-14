@@ -1,5 +1,5 @@
 {
     "diffEditor.codeLens": true,
     "editor.tabCompletion": "on",
-    "cSpell.words": ["Gamepad", "gamestate", "highscore", "leafwing", "Vsync"]
+    "cSpell.words": ["Gamepad", "gamestate", "highscore", "leafwing", "respawn", "Vsync"]
 }

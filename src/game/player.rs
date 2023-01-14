@@ -134,7 +134,8 @@ fn player_input_system_latest(
     }
 }
 
-fn accelerate(
+// [ ]: Move to different module. `movable` or `arena`...
+pub fn accelerate(
     mut query: Query<&mut Transform, With<MoveY>>,
     mut game_data: ResMut<GameData>,
     timer: Res<Time>,

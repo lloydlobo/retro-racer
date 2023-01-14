@@ -13,4 +13,5 @@ pub enum PlayerAction {
     RotateLeft,
     RotateRight,
     Fire,
+    Boost,
 }

@@ -12,6 +12,8 @@ impl Plugin for PlayerPlugin {
                 SystemSet::on_update(AppState::Game)
                     // .with_system(player_input_system_legacy)
                     .with_system(player_input_system_latest)
+                    .with_system(boost_player)
+                    .with_system(accelerate)
                     .with_system(player_invincible_color),
             );
         // .add_system_set(SystemSet::on_update(AppState::Game).
@@ -43,9 +45,10 @@ fn spawn_player(mut commands: Commands) {
         (KeyCode::Left, PlayerAction::RotateLeft),
         (KeyCode::D, PlayerAction::RotateRight),
         (KeyCode::Right, PlayerAction::RotateRight),
+        (KeyCode::Space, PlayerAction::Boost),
     ]);
     input_map
-        .insert(GamepadButtonType::South, PlayerAction::Fire)
+        .insert(GamepadButtonType::South, PlayerAction::Boost)
         .insert(
             SingleAxis::positive_only(GamepadAxisType::LeftStickY, 0.4f32),
             PlayerAction::Forward,
@@ -128,5 +131,44 @@ fn player_input_system_latest(
         }
 
         player_transform.translation.x += direction;
+    }
+}
+
+fn accelerate(
+    mut query: Query<&mut Transform, With<MoveY>>,
+    mut game_data: ResMut<GameData>,
+    timer: Res<Time>,
+) {
+    let delta: Duration = timer.delta();
+    let boost_factor: f32 = game_data.boost_factor;
+    let speed_factor: f32 = game_data.speed_factor;
+
+    if game_data.is_boosting {
+        game_data.move_timer.tick(delta.mul_f32(boost_factor * speed_factor));
+    } else {
+        game_data.move_timer.tick(delta.mul_f32(speed_factor));
+    }
+
+    if !game_data.move_timer.finished() {
+        return;
+    }
+
+    for mut entity_transform in query.iter_mut() {
+        entity_transform.translation.y -= TILE_SIZE;
+    }
+}
+
+fn boost_player(
+    _gamestate: Res<State<AppGameState>>,
+    mut query: Query<(&ActionState<PlayerAction>, &mut Transform, &mut Car), With<Player>>,
+    mut game_data: ResMut<GameData>,
+) {
+    for (action_state, _player_transform, _car) in query.iter_mut() {
+        if action_state.just_pressed(PlayerAction::Boost) {
+            game_data.is_boosting = true;
+        }
+        if action_state.just_released(PlayerAction::Boost) {
+            game_data.is_boosting = false;
+        }
     }
 }

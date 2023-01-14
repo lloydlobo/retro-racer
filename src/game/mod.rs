@@ -4,7 +4,7 @@ mod car;
 mod helpers;
 mod player;
 mod state;
-mod walls;
+mod walls_arena;
 
 pub use self::{
     actions::*,
@@ -13,7 +13,7 @@ pub use self::{
     helpers::*,
     player::*,
     state::*,
-    walls::*,
+    walls_arena::*,
 };
 use crate::prelude::*;
 
@@ -23,23 +23,26 @@ pub const LEFT_WALL_X: f32 = SCREEN_X + HALF_TILE;
 
 pub const RIGHT_WALL_X: f32 = SCREEN_X + SCREEN_WIDTH as f32 * TILE_SIZE;
 
-pub struct InvincibleTimer {
-    time: f32,
-    mode: TimerMode,
-}
+pub fn accelerate(
+    mut query: Query<&mut Transform, With<MoveY>>,
+    mut game_data: ResMut<GameData>,
+    timer: Res<Time>,
+) {
+    let delta: Duration = timer.delta();
+    let boost_factor: f32 = game_data.boost_factor;
+    let speed_factor: f32 = game_data.speed_factor;
 
-impl InvincibleTimer {
-    pub const fn new(time: f32, mode: TimerMode) -> Self {
-        Self { time, mode }
+    if game_data.is_boosting {
+        game_data.move_timer.tick(delta.mul_f32(boost_factor * speed_factor));
+    } else {
+        game_data.move_timer.tick(delta.mul_f32(speed_factor));
     }
 
-    pub fn timer(&mut self) -> Timer {
-        Timer::from_seconds(self.time, self.mode)
+    if !game_data.move_timer.finished() {
+        return;
     }
 
-    pub fn tick(&mut self) -> Timer {
-        let mut timer = Self::timer(self);
-        timer.tick(Duration::from_secs_f32(self.time));
-        timer
+    for mut entity_transform in query.iter_mut() {
+        entity_transform.translation.y -= TILE_SIZE;
     }
 }
